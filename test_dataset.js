@@ -83,7 +83,7 @@ const vehiculos = db.vehiculos.insertMany([
 
 const carroMariaID = vehiculos.insertedIds[0]
 
-//ACA 50 REGISTROS DE PARQUEOS, MEZCLANDO SEDES, ZONAS Y TIPOS DE VEHICULOS.  ALGUNOS DEBEN ESTAR ACTUALMENTE ACTIVOS (SIN HORA DE SALIDA).....
+//AC 50 REGISTROS DE PARQUEOS, MEZCLANDO SEDES, ZONAS Y TIPOS DE VEHICULOS.  ALGUNOS DEBEN ESTAR ACTUALMENTE ACTIVOS (SIN HORA DE SALIDA).....
 //INSERTAR PARQUEO (Historicos y activos):
 //Historico (Ya salio...) y Activo (Aun parqueado)
 db.parqueos.insertMany[(

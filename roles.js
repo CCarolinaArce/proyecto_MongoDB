@@ -1,6 +1,5 @@
 // // roles.js
 // db = db.getSiblingDB("campus_parking");
-
 // // Rol Administrador
 // db.createRole({
 //   role: "RolAdministrador",
@@ -9,7 +8,6 @@
 //   ],
 //   roles: []
 // });
-
 // // Rol Empleado
 // db.createRole({
 //   role: "RolEmpleado",
@@ -20,7 +18,6 @@
 //   ],
 //   roles: []
 // });
-
 // // Rol Cliente
 // db.createRole({
 //   role: "RolCliente",
@@ -30,3 +27,17 @@
 //   ],
 //   roles: []
 // });
+db = db.getSiblingDB('campusParking')
+ //Admin rol...
+
+db.createRole({
+    role: 'RolAdminatrador',
+    privileges: [{
+            resource: { db: 'campusParking', collection: "" },
+            actions: 
+                [ 'find', 'insert', 'update', 'remove', 'createCollection', 'createIndex' ]
+        }],
+    roles: []
+})
+
+
