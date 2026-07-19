@@ -1,51 +1,67 @@
-// aggregations.js
-db = db.getSiblingDB("campus_parking");
 
-// 1. Parqueos registrados por sede en el último mes
+db = db.getSiblingDB("campusParking")
+
+1. // Parqueos registrados por sede en el último mes
+
 db.parqueos.aggregate([
-  { $match: { hora_entrada: { $gte: new Date(new Date().setMonth(new Date().getMonth() - 1)) } } },
-  { $lookup: { from: "zonas", localField: "zona_id", foreignField: "_id", as: "zona_info" } },
-  { $unwind: "$zona_info" },
-  { $group: { _id: "$zona_info.sede_id", total_parqueos: { $sum: 1 } } }
-]);
+    { $match: { hora_entrada: { $gte: new Date(new Date().setMonth(new Date().getMonth() -1)) }} },
+    { $lookup: { from: 'zonas', localField: 'zona_ID', foreignField: '_id', as: 'zonaInfo'}},
+    { $unwind: '$zonaInfo'},
+    { $group: { _id: '$zonaInfo.sede_ID', totalParqueos: { $sum: 1 } }}
+])
 
-// 2. Zonas más ocupadas en cada sede (basado en registros históricos)
+2. // Zonas mas ocupadas en cada sede (basado en registros historicos)
+
 db.parqueos.aggregate([
-  { $group: { _id: "$zona_id", total_usos: { $sum: 1 } } },
-  { $sort: { total_usos: -1 } }
-]);
+    { $group: { _id: '$zona_ID', totalUsos: { $sum: 1 } }},
+    { $sort: { totalUsos: -1}}
+])
+3. // Ingreso total generado por parqueo en cada sede.
 
-// 3. Ingreso total generado por parqueo en cada sede
 db.parqueos.aggregate([
-  { $match: { costo_total: { $ne: null } } },
-  { $lookup: { from: "zonas", localField: "zona_id", foreignField: "_id", as: "zona_info" } },
-  { $unwind: "$zona_info" },
-  { $group: { _id: "$zona_info.sede_id", ingresos_totales: { $sum: "$costo_total" } } }
-]);
+    { $match: { costoTotal: { $ne: null}}},
+    { $lookup: { from: 'zonas', localField: 'zona_ID', foreignField: '_id', as: 'zonaInfo'}},
+    { $unwind: '$zonaInfo'},
+    { $group: { _id: '$zonaInfo.sede_ID', ingresosTotales: { $sum: '$costoTotal' }}
+    }
+])
+4. // Clientes que han usado mas veces el parqueadero.
 
-// 4. Cliente que ha usado más veces el parqueadero
 db.parqueos.aggregate([
-  { $lookup: { from: "vehiculos", localField: "vehiculo_id", foreignField: "_id", as: "vehiculo_info" } },
-  { $unwind: "$vehiculo_info" },
-  { $group: { _id: "$vehiculo_info.cliente_id", visitas: { $sum: 1 } } },
-  { $sort: { visitas: -1 } },
-  { $limit: 1 }
-]);
+    { $lookup: { from: 'vehiculos', localField: 'vehiculo_ID', foreignField: '_id', as: 'vehiculoInfo'}}, 
+    { $unwind: '$vehiculoInfo'},
+    { $group: { _id: '$vehiculoInfo.cliente_ID', visitas: { $sum: 1}}},
+    { $sort: { visitas: -1}},
+    { $limit: 1}
+])
 
-/*5. Historial de parqueos dado un cliente (Ejemplo genérico, requiere ObjectId real)
-Reemplaza "ID_DEL_CLIENTE" con un ObjectId válido.
-*/
+5. // Que tipo de vehiculo es mas frecuente por sede?
+
+db.parqueos.aggregate([
+    { $match: { cliente_ID: ObjectId ('ID_DEL_CLIENTE') }},
+    { $lookup: { from: 'parqueos', localField: '_id', foreignField: 'vehiculo_ID', as: "historial "}},
+    { $unwind: '$historial'},
+    { $project: { placa: 1, tipo: 1, entrada: '$historial.horaEntrada', salida: '$historial.horaSalida', costo: '$historial.costoTotal'} }
+])
+
+
+6. // En base a un cliente: Historial de parqueos incluyendo: ( fecha, sede, zona, tipo de vehiculo, tiempo y costo).
+
 db.vehiculos.aggregate([
-  { $match: { cliente_id: ObjectId("ID_DEL_CLIENTE") } },
-  { $lookup: { from: "parqueos", localField: "_id", foreignField: "vehiculo_id", as: "historial" } },
-  { $unwind: "$historial" },
-  { $project: { placa: 1, tipo: 1, entrada: "$historial.hora_entrada", salida: "$historial.hora_salida", costo: "$historial.costo_total" } }
-]);
+    { $match: { clienteID: ObjectId('ID_DEL_CLIENTE')}},
+    { $lookup: { from: 'parqueos', localField: '_id', foreignField: 'vehiculo_ID', as: 'historial'}},
+    { $unwind: '$historial'},
+    { $project: { placa: 1, tipo: 1, entrada: '$historial.horaEntrada', salida: '$historial.horaSalida', costo: '$historial.costoTotal'}}
 
-//6. Vehículos parqueados actualmente en cada sede
-db.parqueos.aggregate([
-  { $match: { hora_salida: null } },
-  { $lookup: { from: "vehiculos", localField: "vehiculo_id", foreignField: "_id", as: "vehiculo" } },
-  { $unwind: "$vehiculo" }
-]);
+])
+7. // Vehiculos parqueados actualmente en cada sede.
+
+db.parqueosaggregate([
+    { $match: { horaSalida: null }},
+    { $lookup: { from: 'vehiculos', localField: 'vehiculo_ID', foreignField: '_id', as: 'vehiculo'}},
+    { $unwind: '$vehiculo'}
+])
+8. // Listado de zonas que han excedido su capacidad de parqueo en algun momento.
+
+
 
