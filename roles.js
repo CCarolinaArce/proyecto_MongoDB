@@ -1,8 +1,8 @@
 db = db.getSiblingDB('campusParking')
- //Admin rol...
 
+//Admin rol...
 db.createRole({
-    role: 'RolAdminatrador',
+    role: 'RolAdministrador', 
     privileges: [
         { resource: { db: 'campusParking', collection: "" },
           actions: [ 'find', 'insert', 'update', 'remove', 'createCollection', 'createIndex' ]}
@@ -14,21 +14,19 @@ db.createRole({
 db.createRole({
     role: 'RolEmpleado',
     privileges: [
-        { resource: { db: 'campusParking', collection: 'clientes' }, actions: [ 'find ']},
-        { resouurce: { db: 'campusParking', collection: 'vehiculos'}, actions: [ 'find']},
-        { resource: { db: 'campusParking', collection: 'parqueos'}, actions:  [ 'find', 'insert', 'update']}
+        { resource: { db: 'campusParking', collection: 'usuarios' }, actions: [ 'find' ]}, 
+        { resource: { db: 'campusParking', collection: 'vehiculos'}, actions: [ 'find' ]}, 
+        { resource: { db: 'campusParking', collection: 'parqueos'}, actions:  [ 'find', 'insert', 'update' ]}
         ], 
-          roles: []
+    roles: []
 })
 
 //Rol de usuario...
 db.createRole({
-    role: 'RoleUsuario',
-    priveleges: [
-        { resource: { db: 'campusParking', collection: 'parqueos'}, actions: [ 'find' ]},
-        { resource: { db: 'campusParking', collection: 
-        'zonas'}, actions: [ 'find' ]}
+    role: 'RolUsuario',
+    privileges: [
+        { resource: { db: 'campusParking', collection: 'parqueos'}, actions: [ 'find' ]}, 
+        { resource: { db: 'campusParking', collection: 'zonas'}, actions: [ 'find' ]}
     ],
     roles: []
 })
-

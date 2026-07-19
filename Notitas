@@ -1,2 +1,16 @@
-En colecciones donde se escriba mas y se lea menos los indices deben ser pocos.
-Y donde se escriba menos y se lea mas los indices deben ser pocos?
+// En colecciones donde se escriba mas y se lea menos los indices deben ser pocos.
+// Y donde se escriba menos y se lea mas los indices deben ser pocos???
+
+// ¿Cómo funcionan los índices en MongoDB?
+// Cuando haces una consulta (como las de tus agregaciones con $match), MongoDB tiene dos formas de buscar los datos:
+
+// Collection Scan (El camino lento): Si no hay un índice, MongoDB tiene que revisar todos los documentos de la colección uno por uno para ver cuáles cumplen tu condición. Si tienes 5 millones de registros de parqueos, revisará los 5 millones, lo cual consume muchísima memoria y tiempo.
+
+// Index Scan (El camino rápido): Si creas un índice, MongoDB crea una estructura de datos ordenada separada (llamada B-Tree). Cuando buscas algo, MongoDB revisa esta estructura ordenada, encuentra la ubicación exacta del dato al instante y va directo a él.
+
+// La regla de oro: ¿Por qué no indexar todo?Si los índices son tan buenos, ¿por qué no le ponemos índices a todos los campos de todas las colecciones? 
+// 
+// Por dos razones importantes: 
+// DesventajaExplicaciónPérdida de velocidad al escribirCada vez que insertas (insertMany), actualizas o borras un documento, MongoDB tiene que actualizar todos los índices asociados. Muchos índices hacen que las lecturas sean súper rápidas, pero las escrituras más lentas.Espacio en discoLos índices son estructuras de datos reales que ocupan memoria RAM y espacio en tu disco duro.
+// 
+// La estrategia: Crea índices solo para los campos que usas en el $match o en tus $lookup, nunca para los campos que solo muestras al final (como placa o costoTotal, a menos que vayas a filtrar por ellos).

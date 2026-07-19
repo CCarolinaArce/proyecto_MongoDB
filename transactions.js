@@ -1,44 +1,43 @@
-// transactions.js
-// Ejecutar en mongosh
-
-const dbName = "campus_parking";
-const session = db.getMongo().startSession();
-session.startTransaction();
+const dbName = 'campusParking'
+const session = db.getMongo().startSession()
+session.startTransaction()
 
 try {
-  const dbSession = session.getDatabase(dbName);
-  
-  // 1. Definir los IDs (En un entorno real, estos vienen del frontend/backend)
-  const zonaObjetivo = dbSession.zonas.findOne({ nombre: "Zona A - Carros" });
-  const vehiculoObjetivo = dbSession.vehiculos.findOne({ placa: "ABC123" });
+  const dbSession = session.getDatabase(dbName)
 
-  if (zonaObjetivo.cupos_disponibles <= 0) {
-    throw new Error("No hay cupos disponibles en esta zona.");
-  }
+//Aqui definimos los IDs que vendrian del frontend/backend...
+const zonaObjetivo = dbSession.zonas.findOne({ nombre: 'Zona A - Carros'})
+const vahiculosObjetivo = dbSession.vehiculos.findOne({ placa: 'ABCD123'})
 
-  // 2. Insertar el documento de ingreso
-  dbSession.parqueos.insertOne({
-    vehiculo_id: vehiculoObjetivo._id,
-    zona_id: zonaObjetivo._id,
-    hora_entrada: new Date(),
-    hora_salida: null,
-    costo_total: null
-  });
+if (zonaObjetivo.cuposDisponibles <= 0) {
+  throw new Error('No hay cupos disponibles en esta zona.')
+}
 
-  // 3. Descontar el cupo de la zona
-  dbSession.zonas.updateOne(
-    { _id: zonaObjetivo._id },
-    { $inc: { cupos_disponibles: -1 } }
-  );
+2. //Insertamos el documento...
+dbSession.parqueos.insertOne({
+  vehiculoID: vehiculoObjetivo._id,
+  zonaID: zonaObjetivo._id,
+  horaEntrada: new Date(),
+  horaSalida: null,
+  costoTotal: null
+})
 
-  // 4. Confirmar transacción
-  session.commitTransaction();
-  print("Ingreso registrado exitosamente. Transacción completada.");
+// Despues descontamos el cupo de la zona...
+dbSession.zonas.updateOne(
+  { _id: zonaObjetivo._id },
+  { $inc: { cuposDisponibles: -1}}
+)
 
-} catch (error) {
-  // En caso de cualquier error, revertir todos los cambios
-  session.abortTransaction();
-  print("Transacción abortada debido a un error: " + error.message);
-} finally {
-  session.endSession();
+// Luego confirmamos la transaccion...
+session.commitTransaction()
+print('Ingreso registrado exitosamente. Transaccion Completada!!!...')
+} 
+catch (error) {
+  //En caso de cualquier error, entonces revertimos los cambios con la funcion abortar-transaccion...
+session.abortTransaction()
+print('Transaccion interrumpida debido a un erro: ' + error.message )
+} 
+finally {
+//finalizamos la sesion...
+  session.endSession()
 }
