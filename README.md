@@ -128,7 +128,7 @@ db.parqueos.aggregate([
 
             CODIGO EXPLICADO PASO A PASO:
 
-            ![alt text](image-1.png)
+    ![alt text](image-1.png)
 
 
 
@@ -147,21 +147,13 @@ db.parqueos.aggregate([
         EJEMPLOS DE CREACION DE USUARIOS CON ESOS ROLES:
 
 // Creación de rol personalizado para el Empleado
-db.createRole({
-  role: "RolEmpleadoParqueadero",
-  privileges: [
-    { resource: { db: "campusParking", collection: "parqueos" }, actions: [ "find", "insert", "update" ] },
-    { resource: { db: "campusParking", collection: "vehiculos" }, actions: [ "find", "insert" ] },
-    { resource: { db: "campusParking", collection: "zonas" }, actions: [ "find" ] }
-  ],
-  roles: []
-})
+![alt text](image-2.png)
 
 // Asignación del rol a un usuario de base de datos
-db.createUser({
-  user: "juan_empleado",
-  pwd: "passwordSeguro123",
-  roles: [ { role: "RolEmpleadoParqueadero", db: "campusParking" } ]
+        db.createUser({
+            user: "juan_empleado",
+            pwd: "passwordSeguro123",
+            roles: [ { role: "RolEmpleadoParqueadero", db: "campusParking" } ]
 })
 
 
