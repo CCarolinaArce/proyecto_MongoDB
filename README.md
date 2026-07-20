@@ -22,11 +22,11 @@ CAMPUS PARKING - SISTEMA DE GESTION DE PARQUEADORES
 
     Las colecciones creadas en total fueron 5 y son las siguientes:
 
-    1. Coleccion SEDES: Incluye la informacion general de las ubicaciones fisicas.
-    2. Coleccion ZONAS: Son las areas especificas dentrode cada sede (VIP, motos, bicicletas, etc.)
-    3. Coleccion USUARIOS: Credenciales y datos personales de Administradores, Empleados y Clientes.
-    4. Coleccion VEHICULOS: Incluye todos tipos de automotores registrados y vinculados a clientes especificos.
-    5. Coleccion PARQUEOS: Es el registro transaccional de entradas, salidas y cobros de parqueo.
+        1. Coleccion SEDES: Incluye la informacion general de las ubicaciones fisicas.
+        2. Coleccion ZONAS: Son las areas especificas dentrode cada sede (VIP, motos, bicicletas, etc.)
+        3. Coleccion USUARIOS: Credenciales y datos personales de Administradores, Empleados y Clientes.
+        4. Coleccion VEHICULOS: Incluye todos tipos de automotores registrados y vinculados a clientes especificos.
+        5. Coleccion PARQUEOS: Es el registro transaccional de entradas, salidas y cobros de parqueo.
 
 
 
@@ -97,15 +97,15 @@ CAMPUS PARKING - SISTEMA DE GESTION DE PARQUEADORES
         1.  Ingresos totales generados por Sede...
             Calcula cuánto dinero ha producido cada sede sumando los costoTotal de los parqueos finalizados, cruzando los datos entre parqueos, zonas y sedes.    
 
-db.parqueos.aggregate([
-  { $match: { costoTotal: { $ne: null } } }, // Solo parqueos finalizados
-  { $lookup: { from: "zonas", localField: "zonaID", foreignField: "_id", as: "zona_info" } },
-  { $unwind: "$zona_info" },
-  { $lookup: { from: "sedes", localField: "zona_info.sede_ID", foreignField: "_id", as: "sede_info" } },
-  { $unwind: "$sede_info" },
-  { $group: { _id: "$sede_info.nombre", ingresosTotales: { $sum: "$costoTotal" }, totalServicios: { $sum: 1 } } },
-  { $sort: { ingresosTotales: -1 } }
-])
+                db.parqueos.aggregate([
+                { $match: { costoTotal: { $ne: null } } }, // Solo parqueos finalizados
+                { $lookup: { from: "zonas", localField: "zonaID", foreignField: "_id", as: "zona_info" } },
+                { $unwind: "$zona_info" },
+                { $lookup: { from: "sedes", localField: "zona_info.sede_ID", foreignField: "_id", as: "sede_info" } },
+                { $unwind: "$sede_info" },
+                { $group: { _id: "$sede_info.nombre", ingresosTotales: { $sum: "$costoTotal" }, totalServicios: { $sum: 1 } } },
+                { $sort: { ingresosTotales: -1 } }
+                ])
 
         2. Ocupación actual por Zona
            Muestra cuántos vehículos están actualmente estacionados (horaSalida: null) agrupados por el nombre de la zona.
@@ -148,13 +148,6 @@ db.parqueos.aggregate([
 
 // Creación de rol personalizado para el Empleado
 ![alt text](image-2.png)
-
-// Asignación del rol a un usuario de base de datos
-        db.createUser({
-            user: "juan_empleado",
-            pwd: "passwordSeguro123",
-            roles: [ { role: "RolEmpleadoParqueadero", db: "campusParking" } ]
-})
 
 
 
