@@ -10,11 +10,11 @@ CAMPUS PARKING - SISTEMA DE GESTION DE PARQUEADORES
 
     MongoDB se utiliza como base de datos principal por las siguiente razones:
 
-    A. FLEXIBILIDAD DE ESQUEMAS: Permite manejar diferentes tipos de vehiculos y zonas con atributos variables sin requerir         migraciones complejas.
+        A. FLEXIBILIDAD DE ESQUEMAS: Permite manejar diferentes tipos de vehiculos y zonas con atributos variables sin requerir         migraciones complejas.
 
-    B. ALTA VELOCIDAD DE ESCRITURA/LECTURA: El registro de entradas y salidas de vehiculos de la coleccion parqueos, es una operacion de alta frecuencia que se beneficia del rendimiento en operaciones transaccionales de MongoDB.
+        B. ALTA VELOCIDAD DE ESCRITURA/LECTURA: El registro de entradas y salidas de vehiculos de la coleccion parqueos, es una operacion de alta frecuencia que se beneficia del rendimiento en operaciones transaccionales de MongoDB.
 
-    C. CONSULTAS GEOESPACIALES Y JERARQUICAS: Facilita la escalabilidad futura si se requiere buscar parqueaderos cercanos o estructurar jerarquias complejas de sedes.
+        C. CONSULTAS GEOESPACIALES Y JERARQUICAS: Facilita la escalabilidad futura si se requiere buscar parqueaderos cercanos o estructurar jerarquias complejas de sedes.
 
 
 
@@ -34,11 +34,11 @@ CAMPUS PARKING - SISTEMA DE GESTION DE PARQUEADORES
 
     Se opto principalmente por un modelo normalizado mediante referencias por las siguientes razones de arquitectura:
 
-    A. PARQUEOS (Referencias): Normalmente Un vehiculo o zona puede tener miles de registros de parqueo a lo largo del tiempo. EMBEDER los parqueos dentro del vehiculo solo crearia un Unbounded Array o arreglo ilimitado, superando el limite de 16MB por documento, degradando asi el rendimiento.
+            A. PARQUEOS (Referencias): Normalmente Un vehiculo o zona puede tener miles de registros de parqueo a lo largo del tiempo. EMBEDER los parqueos dentro del vehiculo solo crearia un Unbounded Array o arreglo ilimitado, superando el limite de 16MB por documento, degradando asi el rendimiento.
 
-    B. ZONAS (Refencias a Sede): Las zonas referencian al ID de las sedes. Aunque se podrian embeder en sedes, mantenerlas separadas permite consultar la disponibilidad de zonas globales de manera mas eficiente.
+            B. ZONAS (Refencias a Sede): Las zonas referencian al ID de las sedes. Aunque se podrian embeder en sedes, mantenerlas separadas permite consultar la disponibilidad de zonas globales de manera mas eficiente.
 
-    C. VEHICULOS (Referencias al Cliente): Los vehiculos referencia al ID de los clientes para mantener el documento del cliente ligero al momento de autenticarse.
+            C. VEHICULOS (Referencias al Cliente): Los vehiculos referencia al ID de los clientes para mantener el documento del cliente ligero al momento de autenticarse.
 
 
 
@@ -110,12 +110,12 @@ CAMPUS PARKING - SISTEMA DE GESTION DE PARQUEADORES
         2. Ocupación actual por Zona
            Muestra cuántos vehículos están actualmente estacionados (horaSalida: null) agrupados por el nombre de la zona.
 
-db.parqueos.aggregate([
-  { $match: { horaSalida: null } },
-  { $lookup: { from: "zonas", localField: "zonaID", foreignField: "_id", as: "zona" } },
-  { $unwind: "$zona" },
-  { $group: { _id: "$zona.nombre", vehiculosParqueados: { $sum: 1 } } }
-])
+                db.parqueos.aggregate([
+                { $match: { horaSalida: null } },
+                { $lookup: { from: "zonas", localField: "zonaID", foreignField: "_id", as: "zona" } },
+                { $unwind: "$zona" },
+                { $group: { _id: "$zona.nombre", vehiculosParqueados: { $sum: 1 } } }
+                ])
 
 
 
